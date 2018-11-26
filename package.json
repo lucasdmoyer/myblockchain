@@ -14,5 +14,13 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.4"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasdmoyer/myblockchain.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lucasdmoyer/myblockchain/issues"
+  },
+  "homepage": "https://github.com/lucasdmoyer/myblockchain#readme"
 }

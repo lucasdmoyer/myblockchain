@@ -89,3 +89,6 @@ class Blockchain{
       }
     }
 }
+
+// Export the class
+module.exports.Blockchain = Blockchain;
