@@ -25,9 +25,12 @@ class BlockController {
      * Implement a GET Endpoint to retrieve a block by index, url: "/api/block/:index"
      */
     getBlockByIndex() {
-        this.app.get("/api/block/:index", (req, res) => {
+        this.app.get("/block/:index", (req, res) => {
             // Add your code here
             block = this.chain.getBlock(req.params.index);
+            if (!block) {
+                throw new Error("Block height does not exist");
+            }
             res.send(block);
         });
     }
@@ -36,9 +39,9 @@ class BlockController {
      * Implement a POST Endpoint to add a new Block, url: "/api/block"
      */
     postNewBlock() {
-        this.app.post("/api/block", (req, res) => {
+        this.app.post("/block", (req, res) => {
             // Add your code here
-            block = this.chain.addBlock("new block added");
+            block = this.chain.addBlock(new simpleChainClass.Block(req.body.body));
             res.send(block);
         });
     }
