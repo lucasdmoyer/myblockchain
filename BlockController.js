@@ -30,8 +30,9 @@ class BlockController {
             block = this.chain.getBlock(req.params.index);
             if (!block) {
                 throw new Error("Block height does not exist");
+            } else {
+                res.send(block);
             }
-            res.send(block);
         });
     }
 
@@ -41,7 +42,7 @@ class BlockController {
     postNewBlock() {
         this.app.post("/block", (req, res) => {
             // Add your code here
-            block = this.chain.addBlock(new simpleChainClass.Block(req.body.body));
+            block =  this.chain.addBlock(new simpleChainClass.Block(req.body.body));
             res.send(block);
         });
     }

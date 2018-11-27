@@ -34,7 +34,8 @@ class Blockchain{
     // Block hash with SHA256 using newBlock and converting to a string
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
     // Adding block object to chain
-  	this.bd.addLevelDBData(newBlock.height, JSON.stringify(newBlock).toString());
+    this.bd.addLevelDBData(newBlock.height, JSON.stringify(newBlock).toString());
+    return JSON.stringify(newBlock).toString();
   }
 
   // Get block height
@@ -45,7 +46,7 @@ class Blockchain{
     // get block
     getBlock(blockHeight){
       // return object as a single string
-      return JSON.parse(JSON.stringify(this.bd.getLevelDBData(blockHeight)));
+      return JSON.parse(JSON.stringify(this.bd.getLevelDBData(blockHeight).then(function(result) {return result})));
     }
 
     // validate block
@@ -92,3 +93,4 @@ class Blockchain{
 
 // Export the class
 module.exports.Blockchain = Blockchain;
+module.exports.Block = Block;

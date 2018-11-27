@@ -1,5 +1,5 @@
-2018/11/26-14:45:49.412 16ac Recovering log #37
-2018/11/26-14:45:49.412 16ac Level-0 table #39: started
-2018/11/26-14:45:49.413 16ac Level-0 table #39: 391 bytes OK
-2018/11/26-14:45:49.445 16ac Delete type=0 #37
-2018/11/26-14:45:49.445 16ac Delete type=3 #35
+2018/11/27-11:41:16.824 366c Recovering log #69
+2018/11/27-11:41:16.825 366c Level-0 table #72: started
+2018/11/27-11:41:16.864 366c Level-0 table #72: 391 bytes OK
+2018/11/27-11:41:16.881 366c Delete type=0 #69
+2018/11/27-11:41:16.881 366c Delete type=3 #67
