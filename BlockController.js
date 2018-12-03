@@ -1,6 +1,8 @@
 const SHA256 = require('crypto-js/sha256');
-// const BlockClass = require('./Block.js');
+const bitcoinMessage = require('bitcoinjs-message');
+const hex2ascii = require('hex2ascii')
 const simpleChainClass = require('./simpleChain.js')
+const mempoolClass = require('./mempool.js')
 
 
 /**
@@ -17,8 +19,13 @@ class BlockController {
         // this.blocks = [];
         // this.initializeMockData();
         this.chain = new simpleChainClass.Blockchain();
+        this.mempool = new mempoolClass.Mempool();
         this.getBlockByIndex();
         this.postNewBlock();
+        this.submitValidationRequest();
+        this.validate();
+        this.getByHash();
+        this.getByAddress();
     }
 
     /**
@@ -27,7 +34,7 @@ class BlockController {
     getBlockByIndex() {
         this.app.get("/block/:index", (req, res) => {
             // Add your code here
-            block = this.chain.getBlock(req.params.index);
+            let block = this.chain.getBlock(req.params.index);
             if (!block) {
                 throw new Error("Block height does not exist");
             } else {
@@ -42,10 +49,62 @@ class BlockController {
     postNewBlock() {
         this.app.post("/block", (req, res) => {
             // Add your code here
-            block =  this.chain.addBlock(new simpleChainClass.Block(req.body.body));
-            res.send(block);
+            let verifiedAddress = this.mempool.verifyAddressRequest(req.body.address);
+            if (verifiedAddress) {
+                let body = {
+                    address: req.body.address,
+                    star: {
+                        ra: req.body.star.ra,
+                        dec: req.body.star.dec,
+                        mag: req.body.star.mag,
+                        cen: req.body.star.cen,
+                        story: Buffer(req.body.star.story).toString('hex'),
+                    }
+                }
+                let block =  this.chain.addBlock(new simpleChainClass.Block(body));
+                //body.star.storyDecoded = hex2ascii(body.star.story);
+                res.send(block);
+            }   
         });
     }
+
+    // mempool stores an array of address
+    submitValidationRequest() {
+        this.app.post("/requestValidation", (req, res) => {
+            res.send(this.mempool.addRequestValidation(req));
+        });
+    }
+
+    validate() {
+        this.app.post("/message-signature/validate", (req, res) => {
+            // send validation request with address and signature
+            res.send(this.mempool.validateRequestByWallet(req));
+        });
+    }
+
+    getByHash() {
+        this.app.get("/stars/hash:hash", (req, res) => {
+            let block = this.chain.getBlockByHash(req.params.hash);
+            if (!block) {
+                throw new Error("Block hash does not exist");
+            } else {
+                res.send(block);
+            }
+        });
+    }
+
+    getByAddress() {
+        this.app.get("/stars/address:address", (req, res) => {
+            let block = this.chain.getBlockByWalletAddress(req.params.address);
+            if (!block) {
+                throw new Error("Block address does not exist");
+            } else {
+                res.send(block);
+            }
+        });
+    }
+    
+  
 
     /**
      * Help method to inizialized Mock dataset, adds 10 test blocks to the blocks array

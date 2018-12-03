@@ -21,7 +21,16 @@ npm init
 
 ## Testing
 The following endpoints are available
+POST - takes an address
+localhost:8000/requestValidation
+POSTS - takes an address and  signature
+localhost:8000/message-signature/validate
+POST - takes a JSON object of a star
+localhost:8000/block/
+
 GET
-http://localhost:8000/block/[blockheight]
-POST
-http://localhost:8000/block
+localhost:8000/block/[blockheight]
+GET
+localhost:8000/stars/hash:[hash]
+GET
+localhost:8000/stars/address:[address]

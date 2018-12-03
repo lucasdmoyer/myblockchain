@@ -49,6 +49,14 @@ class Blockchain{
       return JSON.parse(JSON.stringify(this.bd.getLevelDBData(blockHeight).then(function(result) {return result})));
     }
 
+    getBlockByHash(hash) {
+      return JSON.parse(JSON.stringify(this.bd.getBlockByHash(hash).then(function(result) {return result})));
+    }
+
+    getBlockByWalletAddress(address) {
+      return JSON.parse(JSON.stringify(this.bd.getBlockByWalletAddress(address).then(function(result) {return result})));
+    }
+
     // validate block
     async validateBlock(blockHeight){
       // get block object

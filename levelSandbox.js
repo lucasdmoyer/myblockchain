@@ -12,6 +12,47 @@ class LevelSandbox {
     	this.db = level(chainDB);
     }
   
+    // get block by hash
+    getBlockByHash(hash) {
+        let self = this;
+        let block = null;
+        return new Promise(function(resolve, reject){
+            self.db.createReadStream()
+            .on('data', function (data) {
+                if(data.hash === hash){
+                    block = data;
+                }
+            })
+            .on('error', function (err) {
+                reject(err)
+            })
+            .on('close', function () {
+                resolve(block);
+            });
+        });
+    }
+
+    getBlockByWalletAddress(address) {
+        let self = this;
+        let block = null;
+        return new Promise(function(resolve, reject){
+            let result = [];
+            self.db.createReadStream()
+            .on('data', function (data) {
+                //console.log(JSON.parse(data.value));
+                if(JSON.parse(data.value).body.address === address){
+                    result.push(data);
+                }
+            })
+            .on('error', function (err) {
+                reject(err)
+            })
+            .on('close', function () {
+                resolve(result);
+            });
+        });
+    }
+
   	// Get data from levelDB with a key (Promise)
   	getLevelDBData(key){
         let self = this; // Because we are returning a promise, we will need this to be able to reference 'this' inside the Promise constructor
