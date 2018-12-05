@@ -25,7 +25,7 @@ class Mempool{
             // build request object with walletAddress, requestTimeStamp, message, validationWindow
             let walletAddress = req.body.address;
             let requestTimeStamp = new Date().getTime().toString().slice(0,-3);
-            let message = "19xaiMqayaNrn3x7AjV5cU4Mk5f5prRVpL:1541605128:starRegistry";
+            let message = req.body.address + ":" + requestTimeStamp + ":starRegistery";
             let validationWindow = TimeoutRequestsWindowTime;
             let request = {
                 "walletAddress": walletAddress,
