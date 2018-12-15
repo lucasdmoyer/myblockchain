@@ -50,6 +50,16 @@ class BlockController {
         this.app.post("/block", (req, res) => {
             // Add your code here
             let verifiedAddress = this.mempool.verifyAddressRequest(req.body.address);
+            // check for dec and ra
+            if (!req.body.star.dec || !req.body.star.ra) {
+                res.send("Error. No dec or ra, please add");
+            }
+            // check is story is at most 250 characters and ASCII
+            let asciiCheck = /^[\x00-\x7F]*$/.test(req.body.star.story);
+            if (!asciiCheck || req.body.star.length > 250) {
+                res.send("Error. Either the story is not ascii or it is above 250 characters in length");
+            }
+
             if (verifiedAddress) {
                 let body = {
                     address: req.body.address,

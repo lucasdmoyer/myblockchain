@@ -20,6 +20,7 @@ npm init
 ```
 
 ## Testing
+The project can be tested by running node app.js in the directory
 The following endpoints are available
 POST - takes an address
 localhost:8000/requestValidation

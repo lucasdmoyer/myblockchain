@@ -8,8 +8,10 @@ class Mempool{
         this.timeoutRequests = [];
         this.mempoolValid = [];
     }
+
+    // called from /requestValidation
     addRequestValidation(req) {
-        const TimeoutRequestsWindowTime = 1*60*1000;
+        const TimeoutRequestsWindowTime = 5*60*1000;
 
         let duplicate = false;
         this.storage.forEach(function(element) {    
@@ -18,6 +20,10 @@ class Mempool{
                 
                 let timeElapse = (new Date().getTime().toString().slice(0,-3)) - element.requestTimeStamp;
                 let timeLeft = (TimeoutRequestsWindowTime/1000) - timeElapse;
+                if (timeLeft < 0) {
+                    this.removeValidationRequest(req.body.address);
+                    this.timeoutRequests.push(element);
+                }
                 element.validationWindow = timeLeft;
             }
         });
@@ -59,13 +65,15 @@ class Mempool{
             return element.walletAddress == req.body.address;
         });
         if (request.validationWindow > 0 && bitcoinMessage.verify(request.message, req.body.address, req.body.signature)) {
-            // CONTINUE HERE!!!
             let registerStar = true;
+            const TimeoutRequestsWindowTime = 5*60*1000;
+            let timeElapse = (new Date().getTime().toString().slice(0,-3)) - request.requestTimeStamp;
+            let timeLeft = (TimeoutRequestsWindowTime/1000) - timeElapse;
             let status = {
                 "address": request.walletAddress,
                 "requestTimeStamp": request.requestTimeStamp,
                 "message": request.message,
-                "validationWindow": 200,
+                "validationWindow": timeLeft,
                 "messageSignature": true
             };
             this.mempoolValid.push(status);
@@ -75,6 +83,8 @@ class Mempool{
             }
             
             return validRequest;
+        } else {
+            return false;
         }
     }
 
@@ -84,7 +94,7 @@ class Mempool{
         });
 
         // verify the requst validation exists and if it is valid
-        const TimeoutRequestsWindowTime = 1*60*1000;
+        const TimeoutRequestsWindowTime = 5*60*1000;
         let timeElapse = (new Date().getTime().toString().slice(0,-3)) - request.requestTimeStamp;
         let timeLeft = (TimeoutRequestsWindowTime/1000) - timeElapse;
         request.validationWindow = timeLeft;
