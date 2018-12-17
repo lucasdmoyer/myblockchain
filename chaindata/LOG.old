@@ -1,5 +1,6 @@
-2018/12/14-17:06:12.726 1864 Recovering log #381
-2018/12/14-17:06:12.726 1864 Level-0 table #384: started
-2018/12/14-17:06:12.741 1864 Level-0 table #384: 670 bytes OK
-2018/12/14-17:06:12.759 1864 Delete type=0 #381
-2018/12/14-17:06:12.759 1864 Delete type=3 #379
+2018/12/16-17:27:03.843 d88 Recovering log #51
+2018/12/16-17:27:03.843 d88 Level-0 table #53: started
+2018/12/16-17:27:03.873 d88 Level-0 table #53: 336 bytes OK
+2018/12/16-17:27:03.892 d88 Delete type=0 #51
+2018/12/16-17:27:03.892 d88 Delete type=3 #49
+2018/12/16-17:27:03.903 dbc Moved #44 to level-1 336 bytes OK: files[ 3 14 0 0 0 0 0 ]

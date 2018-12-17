@@ -22,39 +22,45 @@ class Blockchain{
   }
 
   // Add new block
-  addBlock(newBlock){
+  async addBlock(newBlock){
     // Block height
-    newBlock.height = 1 + this.getBlockHeight();
+    let height = await this.getBlockHeight().then(result => {return result});
+    newBlock.height = 1 + height;
     // UTC timestamp
     newBlock.time = new Date().getTime().toString().slice(0,-3);
     // previous block hash
-    if(1 + this.getBlockHeight() > 0){
-      newBlock.previousBlockHash = this.bd.getLevelDBData(this.getBlockHeight()).hash;
+    if(height > 0){
+      let previousBlock = await this.bd.getLevelDBData(height).then(result => {return result});
+      //previousBlock = JSON.parse(previousBlock);
+      newBlock.previousBlockHash = previousBlock.hash;
     }
     // Block hash with SHA256 using newBlock and converting to a string
     newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
     // Adding block object to chain
     this.bd.addLevelDBData(newBlock.height, JSON.stringify(newBlock).toString());
-    return JSON.stringify(newBlock).toString();
+    return await JSON.stringify(newBlock).toString();
   }
 
   // Get block height
     getBlockHeight(){
-      return this.bd.getBlocksCount();
+      return this.bd.getBlocksCount().then(function(result){return result});
     }
 
     // get block
-    getBlock(blockHeight){
+    async getBlock(blockHeight){
       // return object as a single string
-      return JSON.parse(JSON.stringify(this.bd.getLevelDBData(blockHeight).then(function(result) {return result})));
+      let block = await this.bd.getLevelDBData(blockHeight).then(result => {return result});
+      return JSON.parse(JSON.stringify(block));
     }
 
-    getBlockByHash(hash) {
-      return JSON.parse(JSON.stringify(this.bd.getBlockByHash(hash).then(function(result) {return result})));
+    async getBlockByHash(hash) {
+      let block = await this.bd.getBlockByHash(hash).then(result => {return result});
+      return JSON.parse(JSON.stringify(block));
     }
 
-    getBlockByWalletAddress(address) {
-      return JSON.parse(JSON.stringify(this.bd.getBlockByWalletAddress(address).then(function(result) {return result})));
+    async getBlockByWalletAddress(address) {
+      let block = await this.bd.getBlockByWalletAddress(address).then(result => {return result});
+      return JSON.parse(JSON.stringify(block));
     }
 
     // validate block

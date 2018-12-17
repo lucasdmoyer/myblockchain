@@ -19,8 +19,8 @@ class LevelSandbox {
         return new Promise(function(resolve, reject){
             self.db.createReadStream()
             .on('data', function (data) {
-                if(data.hash === hash){
-                    block = data;
+                if(JSON.parse(data.value).hash === hash){
+                    block = data.value;
                 }
             })
             .on('error', function (err) {
@@ -39,16 +39,15 @@ class LevelSandbox {
             let result = [];
             self.db.createReadStream()
             .on('data', function (data) {
-                //console.log(JSON.parse(data.value));
                 if(JSON.parse(data.value).body.address === address){
-                    result.push(data);
+                    block = data.value;
                 }
             })
             .on('error', function (err) {
                 reject(err)
             })
             .on('close', function () {
-                resolve(result);
+                resolve(block);
             });
         });
     }
@@ -82,6 +81,7 @@ class LevelSandbox {
                     reject(err);
                 }
                 resolve(value);
+                
             });
         });
     }
@@ -89,7 +89,6 @@ class LevelSandbox {
   	// Implement this method
     getBlocksCount() {
         let self = this;
-        // Add your code here
         return new Promise(function(resolve, reject) {
             var size = 0;
             self.db.createReadStream({ reverse: true})
@@ -105,7 +104,7 @@ class LevelSandbox {
                 .on('close', function () {
                     // resolve with the count value
                     resolve(size)
-                })
+                });
         });
       }
 }

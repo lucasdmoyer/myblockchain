@@ -32,9 +32,9 @@ class BlockController {
      * Implement a GET Endpoint to retrieve a block by index, url: "/api/block/:index"
      */
     getBlockByIndex() {
-        this.app.get("/block/:index", (req, res) => {
+        this.app.get("/block/:index", async(req, res) => {
             // Add your code here
-            let block = this.chain.getBlock(req.params.index);
+            let block = await this.chain.getBlock(req.params.index);
             if (!block) {
                 throw new Error("Block height does not exist");
             } else {
@@ -47,9 +47,10 @@ class BlockController {
      * Implement a POST Endpoint to add a new Block, url: "/api/block"
      */
     postNewBlock() {
-        this.app.post("/block", (req, res) => {
+        this.app.post("/block", async (req, res) => {
             // Add your code here
-            let verifiedAddress = this.mempool.verifyAddressRequest(req.body.address);
+            //let verifiedAddress = this.mempool.verifyAddressRequest(req.body.address);
+
             // check for dec and ra
             if (!req.body.star.dec || !req.body.star.ra) {
                 res.send("Error. No dec or ra, please add");
@@ -60,7 +61,8 @@ class BlockController {
                 res.send("Error. Either the story is not ascii or it is above 250 characters in length");
             }
 
-            if (verifiedAddress) {
+            //if (verifiedAddress) {
+            if (true) {
                 let body = {
                     address: req.body.address,
                     star: {
@@ -71,30 +73,41 @@ class BlockController {
                         story: Buffer(req.body.star.story).toString('hex'),
                     }
                 }
-                let block =  this.chain.addBlock(new simpleChainClass.Block(body));
+                let block =  await this.chain.addBlock(new simpleChainClass.Block(body));
                 //body.star.storyDecoded = hex2ascii(body.star.story);
                 res.send(block);
-            }   
+            } else {
+                res.send("Not a verified address");
+            }
         });
     }
 
     // mempool stores an array of address
     submitValidationRequest() {
         this.app.post("/requestValidation", (req, res) => {
-            res.send(this.mempool.addRequestValidation(req));
+            if (!req.body.address) {
+                res.send("Error, empty address");
+            } else {
+                res.send(this.mempool.addRequestValidation(req));
+            }
         });
     }
 
     validate() {
         this.app.post("/message-signature/validate", (req, res) => {
             // send validation request with address and signature
-            res.send(this.mempool.validateRequestByWallet(req));
+            if (!req.body.address || !req.body.signature) {
+                res.send("error, no address or signature");
+            } else {
+                res.send(this.mempool.validateRequestByWallet(req));
+            }
         });
     }
 
     getByHash() {
-        this.app.get("/stars/hash:hash", (req, res) => {
-            let block = this.chain.getBlockByHash(req.params.hash);
+        this.app.get("/stars/hash:hash", async (req, res) => {
+            let hashOnly = req.params.hash.slice(1);
+            let block = await this.chain.getBlockByHash(hashOnly);
             if (!block) {
                 throw new Error("Block hash does not exist");
             } else {
@@ -104,8 +117,9 @@ class BlockController {
     }
 
     getByAddress() {
-        this.app.get("/stars/address:address", (req, res) => {
-            let block = this.chain.getBlockByWalletAddress(req.params.address);
+        this.app.get("/stars/address:address", async (req, res) => {
+            let addressOnly = req.params.address.slice(1);
+            let block = await this.chain.getBlockByWalletAddress(addressOnly);
             if (!block) {
                 throw new Error("Block address does not exist");
             } else {
