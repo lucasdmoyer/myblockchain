@@ -40,6 +40,7 @@ class LevelSandbox {
             self.db.createReadStream()
             .on('data', function (data) {
                 if(JSON.parse(data.value).body.address === address){
+                    result.push(data.value);
                     block = data.value;
                 }
             })
@@ -47,7 +48,7 @@ class LevelSandbox {
                 reject(err)
             })
             .on('close', function () {
-                resolve(block);
+                resolve(result);
             });
         });
     }

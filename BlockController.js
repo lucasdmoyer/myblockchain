@@ -35,6 +35,8 @@ class BlockController {
         this.app.get("/block/:index", async(req, res) => {
             // Add your code here
             let block = await this.chain.getBlock(req.params.index);
+            block = JSON.parse(block);
+            block.body.star.starDecoded = hex2ascii(block.body.star.story);
             if (!block) {
                 throw new Error("Block height does not exist");
             } else {
@@ -49,7 +51,7 @@ class BlockController {
     postNewBlock() {
         this.app.post("/block", async (req, res) => {
             // Add your code here
-            //let verifiedAddress = this.mempool.verifyAddressRequest(req.body.address);
+            let verifiedAddress = this.mempool.verifyAddressRequest(req.body.address);
 
             // check for dec and ra
             if (!req.body.star.dec || !req.body.star.ra) {
@@ -61,8 +63,8 @@ class BlockController {
                 res.send("Error. Either the story is not ascii or it is above 250 characters in length");
             }
 
-            //if (verifiedAddress) {
-            if (true) {
+            if (verifiedAddress) {
+            //if (true) {
                 let body = {
                     address: req.body.address,
                     star: {
@@ -74,6 +76,7 @@ class BlockController {
                     }
                 }
                 let block =  await this.chain.addBlock(new simpleChainClass.Block(body));
+                //console.log(block);
                 //body.star.storyDecoded = hex2ascii(body.star.story);
                 res.send(block);
             } else {
@@ -108,6 +111,8 @@ class BlockController {
         this.app.get("/stars/hash:hash", async (req, res) => {
             let hashOnly = req.params.hash.slice(1);
             let block = await this.chain.getBlockByHash(hashOnly);
+            block = JSON.parse(block);
+            block.body.star.starDecoded = hex2ascii(block.body.star.story);
             if (!block) {
                 throw new Error("Block hash does not exist");
             } else {
@@ -119,11 +124,18 @@ class BlockController {
     getByAddress() {
         this.app.get("/stars/address:address", async (req, res) => {
             let addressOnly = req.params.address.slice(1);
-            let block = await this.chain.getBlockByWalletAddress(addressOnly);
-            if (!block) {
+            let blocks = await this.chain.getBlockByWalletAddress(addressOnly);
+            let results = [];
+            blocks.forEach(function(block) {
+                block = JSON.parse(block);
+                block.body.star.starDecoded = hex2ascii(block.body.star.story);
+                results.push(block);
+            });
+            
+            if (!results) {
                 throw new Error("Block address does not exist");
             } else {
-                res.send(block);
+                res.send(results);
             }
         });
     }

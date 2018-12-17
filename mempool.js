@@ -100,8 +100,6 @@ class Mempool{
                 this.mempoolValid.splice(index, 1);
             }
         }
-        console.log("after");
-        console.log(this.mempoolValid);
         // verify the requst validation exists and if it is valid
         const TimeoutRequestsWindowTime = 5*60*1000;
         let timeElapse = (new Date().getTime().toString().slice(0,-3)) - request.requestTimeStamp;
